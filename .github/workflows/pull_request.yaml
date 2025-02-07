@@ -1,0 +1,38 @@
+name: Review Issues
+
+on:
+  pull_request_target:
+    types: [opened]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Fetch Patch Content
+        id: fetch
+        run: |
+          echo 'patch<<EOF' >> $GITHUB_OUTPUT
+          curl -L ${{ github.event.pull_request.patch_url }} >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+      - name: Generate Token
+        uses: tibdex/github-app-token@v2
+        id: generate
+        with:
+          app_id: ${{ secrets.BOT_APP_ID }}
+          private_key: ${{ secrets.BOT_PRIVATE_KEY }}
+      - name: Review Pull Request
+        uses: ./
+        with:
+          github_token: ${{ steps.generate.outputs.token }}
+          openai_base_url: ${{ secrets.OPENAI_BASE_URL }}
+          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+          openai_model: ${{ vars.OPENAI_MODEL }}
+          system_prompt: ${{ vars.PULL_SYSTEM_PROMPT }}
+          available_tools: ${{ vars.PULL_AVAILABLE_TOOLS }}
+          user_input: |
+            Please review this pull request:
+            Title: "${{ github.event.pull_request.title }}"
+            Content: "${{ github.event.pull_request.body }}"
+            Changes: "${{ steps.fetch.outputs.patch }}"

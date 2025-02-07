@@ -1,0 +1,49 @@
+name: Mihomo Party Universal Assistant
+author: mihomo-party-org
+description: A universal AI assistant to help handle GitHub matters
+
+branding:
+  icon: "cpu"
+  color: "black"
+
+inputs:
+  openai_base_url:
+    description: "OpenAI Base URL"
+    required: false
+    default: "https://api.openai.com/v1"
+  openai_api_key:
+    description: "OpenAI API Key"
+    required: true
+  openai_model:
+    description: "OpenAI Model"
+    required: false
+    default: "gpt-4o-mini"
+  openai_temperature:
+    description: "OpenAI Temperature"
+    required: false
+  openai_top_p:
+    description: "OpenAI Top P"
+    required: false
+  openai_frequency_penalty:
+    description: "OpenAI Frequency Penalty"
+    required: false
+  openai_presence_penalty:
+    description: "OpenAI Presence Penalty"
+    required: false
+  system_prompt:
+    description: "System Prompt for the assistant"
+    required: true
+  user_input:
+    description: "User Input for the assistant"
+    required: true
+  available_tools:
+    description: "Available tools for the assistant, separated by comma"
+    required: false
+    default: "closeIssue,lockIssue,commentIssue"
+  github_token:
+    description: "GitHub Token"
+    required: true
+
+runs:
+  using: node20
+  main: dist/index.js
